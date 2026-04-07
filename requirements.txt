@@ -1,0 +1,6 @@
+# requirements_cloud.txt
+# Cloud (Cloud Run + Firestore) dependencies
+
+flask==3.0.3
+google-cloud-firestore==2.16.1
+gunicorn==22.0.0

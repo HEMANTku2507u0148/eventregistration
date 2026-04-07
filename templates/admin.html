@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UniEvents — Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:     #0d0d0d;
+      --paper:   #f5f0e8;
+      --accent:  #e8470a;
+      --muted:   #7a7060;
+      --card:    #fffdf8;
+      --border:  #d6cfc0;
+      --success: #1a7a4a;
+      --danger:  #c0392b;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 3rem;
+      border-bottom: 1.5px solid var(--border);
+      background: var(--ink);
+      color: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+    .logo span { color: var(--accent); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid #444;
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+    }
+
+    .btn-back {
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: opacity 0.15s;
+    }
+    .btn-back:hover { opacity: 0.85; }
+
+    /* ── MAIN ── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .page-sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── STATS CARDS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+    }
+
+    .stat-card-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--ink);
+      display: block;
+    }
+
+    .stat-card-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input, .toolbar select {
+      padding: 0.6rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.5rem;
+      background: var(--card);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .toolbar input:focus, .toolbar select:focus {
+      border-color: var(--ink);
+    }
+
+    .toolbar input { min-width: 220px; }
+
+    .toolbar-right {
+      margin-left: auto;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 4px 4px 0 var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    thead th {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--paper); }
+
+    tbody td {
+      padding: 0.9rem 1.2rem;
+      color: var(--ink);
+      vertical-align: middle;
+    }
+
+    .event-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 100px;
+      background: var(--ink);
+      color: var(--paper);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .date-cell {
+      color: var(--muted);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+
+    .empty-state p { font-size: 1rem; margin-top: 0.5rem; }
+
+    /* ── DELETE BUTTON ── */
+    .btn-delete {
+      background: none;
+      border: 1.5px solid var(--border);
+      color: var(--danger);
+      padding: 0.3rem 0.8rem;
+      border-radius: 0.4rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-delete:hover {
+      background: #fde8e0;
+      border-color: var(--danger);
+    }
+
+    /* ── FLASH ── */
+    .flash-success, .flash-error {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.9rem 1.2rem;
+      border-radius: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      animation: slideIn 0.3s ease;
+    }
+    .flash-success { background: #d4f0e2; border: 1.5px solid var(--success); color: var(--success); }
+    .flash-error   { background: #fde8e0; border: 1.5px solid var(--accent);  color: var(--accent); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── LOGIN WALL ── */
+    .login-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 8px 8px 0 var(--border);
+      text-align: center;
+    }
+
+    .login-card h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .login-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+    .login-card input[type="password"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 0.6rem;
+      background: var(--paper);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      outline: none;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .login-card input[type="password"]:focus {
+      border-color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: 0.6rem;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--accent);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .login-btn:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--accent); }
+    .login-btn:active { transform: translate(2px,2px);   box-shadow: 2px 2px 0 var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1.5px solid var(--border);
+      margin-top: 4rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .main { padding: 2rem 1.5rem; }
+      header { padding: 1rem 1.5rem; }
+      table { font-size: 0.8rem; }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar input { min-width: unset; }
+      .toolbar-right { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Uni<span>Events</span> <span style="font-size:0.9rem;font-weight:400;color:#888;">/ Admin</span></div>
+  <div class="header-right">
+    <span class="badge">{{ version_label }}</span>
+    {% if logged_in %}
+      <a href="/admin/logout" class="btn-back">Log Out</a>
+    {% endif %}
+    <a href="/" class="btn-back">← Registration</a>
+  </div>
+</header>
+
+{% if not logged_in %}
+<!-- ── LOGIN WALL ── -->
+<div class="main">
+  <div class="login-wrap">
+    <div class="login-card">
+      <h2>Admin Access</h2>
+      <p>Enter the admin password to view registrations.</p>
+
+      {% for category, message in messages %}
+        <div class="flash-{{ category }}" style="text-align:left;margin-bottom:1rem;">{{ message }}</div>
+      {% endfor %}
+
+      <form method="POST" action="/admin/login">
+        <input type="password" name="password" placeholder="Enter password…" autofocus required />
+        <button type="submit" class="login-btn">Unlock Dashboard →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<!-- ── DASHBOARD ── -->
+<div class="main">
+  <h1 class="page-title">Registrations</h1>
+  <p class="page-sub">All student registrations across events · {{ version_label }}</p>
+
+  {% for category, message in messages %}
+    <div class="flash-{{ category }}">{{ message }}</div>
+  {% endfor %}
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-card-num">{{ stats.total }}</span>
+      <span class="stat-card-label">Total Registrations</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card-num">{{ stats.events }}</span>
+      <span class="stat-card-label">Unique Events</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card-num">{{ stats.today }}</span>
+      <span class="stat-card-label">Registered Today</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card-num">{{ stats.top_event or '—' }}</span>
+      <span class="stat-card-label">Most Popular Event</span>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <input type="text" id="searchInput" placeholder="🔍  Search by name, email, event…" oninput="filterTable()" />
+    <select id="eventFilter" onchange="filterTable()">
+      <option value="">All Events</option>
+      {% for ev in stats.event_list %}
+        <option value="{{ ev }}">{{ ev }}</option>
+      {% endfor %}
+    </select>
+    <span class="toolbar-right" id="rowCount">{{ registrations|length }} records</span>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    {% if registrations %}
+    <table id="regTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Event</th>
+          <th>Year</th>
+          <th>Department</th>
+          <th>Registered At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in registrations %}
+        <tr>
+          <td style="color:var(--muted);font-size:0.78rem;">{{ loop.index }}</td>
+          <td><strong>{{ r.full_name }}</strong></td>
+          <td>{{ r.email }}</td>
+          <td>{{ r.phone or '—' }}</td>
+          <td><span class="event-tag">{{ r.event_name }}</span></td>
+          <td>{{ r.year or '—' }}</td>
+          <td>{{ r.department or '—' }}</td>
+          <td class="date-cell">{{ r.created_at }}</td>
+          <td>
+            <form method="POST" action="/admin/delete/{{ r.id }}" onsubmit="return confirm('Delete this registration?')">
+              <button type="submit" class="btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div style="font-size:2.5rem;">📋</div>
+      <p>No registrations yet. They will appear here once students register.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const event  = document.getElementById('eventFilter').value.toLowerCase();
+    const rows   = document.querySelectorAll('#regTable tbody tr');
+    let visible  = 0;
+    rows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+      const matchSearch = text.includes(search);
+      const matchEvent  = event === '' || text.includes(event);
+      const show = matchSearch && matchEvent;
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('rowCount').textContent = visible + ' records';
+  }
+</script>
+{% endif %}
+
+<footer>
+  UniEvents Admin · {{ version_label }} · Google Cloud Digital Leader Capstone
+</footer>
+
+</body>
+</html>
